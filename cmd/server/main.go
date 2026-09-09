@@ -7,6 +7,7 @@ package main
 
 import (
 	"entrytest/cmd/server/api"
+	"entrytest/cmd/server/context"
 	"log"
 	"net/http"
 	"os"
@@ -18,7 +19,9 @@ func main() {
 		port = "8080"
 	}
 
-	serverApi := api.CreateServerApi()
+	messageStore := context.CreateMessageStore()
+
+	serverApi := api.CreateServerApi(messageStore)
 	mux := http.NewServeMux()
 
 	// Панель из frontend/. Каталог берётся относительно рабочего, поэтому
@@ -26,6 +29,7 @@ func main() {
 	mux.Handle("/", http.FileServer(http.Dir("frontend")))
 	mux.HandleFunc("GET /health", serverApi.Health.Get)
 	mux.HandleFunc("POST /echo", serverApi.Echo.Post)
+	mux.HandleFunc("POST /messages", serverApi.Messages.Post)
 
 	// TODO Этап 1: GET /health           -> 200, тело "ok"
 	// TODO Этап 2: POST /echo            -> тело запроса без изменений

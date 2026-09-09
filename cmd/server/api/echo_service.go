@@ -10,18 +10,20 @@ import (
 
 type EchoService struct{}
 
-type EchoJsonData struct {
+type EchoDataRequest struct {
 	Message string `json:"message"`
 }
 
 func (echo *EchoService) Post(responseWriter http.ResponseWriter, request *http.Request) {
-	switch request.Header.Get("Content-Type") {
+	contentType := request.Header.Get(HeaderNameContentType)
+	switch contentType {
 	case HeaderValueTextPlain:
 		EchoTextPlain(responseWriter, request)
 	case HeaderValueApplicationJson:
 		EchoApplicationJson(responseWriter, request)
 	default:
 		responseWriter.WriteHeader(http.StatusUnsupportedMediaType)
+		log.Printf("[EchoService.Post] error: unsupported media type: %s", contentType)
 	}
 
 }
@@ -41,16 +43,16 @@ func EchoTextPlain(responseWriter http.ResponseWriter, request *http.Request) {
 func EchoApplicationJson(responseWriter http.ResponseWriter, request *http.Request) {
 	requestBody, error := io.ReadAll(request.Body)
 	if error != nil {
-		log.Printf("[EchoService.Post] error: failed to read request body: %v", error)
 		responseWriter.WriteHeader(http.StatusBadRequest)
+		log.Printf("[EchoService.Post] error: failed to read request body: %v", error)
 		return
 	}
 
-	var echoJsonData EchoJsonData
-	error = json.Unmarshal(requestBody, &echoJsonData)
+	var echoData EchoDataRequest
+	error = json.Unmarshal(requestBody, &echoData)
 	if error != nil {
-		log.Printf("[EchoService.Post] error: unexpected format json: %v", error)
 		responseWriter.WriteHeader(http.StatusBadRequest)
+		log.Printf("[EchoService.Post] error: unexpected format json: %v", error)
 		return
 	}
 
