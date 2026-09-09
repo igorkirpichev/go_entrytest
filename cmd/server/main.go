@@ -25,6 +25,7 @@ func main() {
 	// запускайте из корня модуля: go run ./cmd/server
 	mux.Handle("/", http.FileServer(http.Dir("frontend")))
 	mux.HandleFunc("GET /health", serverApi.Health.Get)
+	mux.HandleFunc("POST /echo", serverApi.Echo.Post)
 
 	// TODO Этап 1: GET /health           -> 200, тело "ok"
 	// TODO Этап 2: POST /echo            -> тело запроса без изменений
