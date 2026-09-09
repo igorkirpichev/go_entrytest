@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вступительный тест - Доска сообщений</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Вступительный тест <span class="subtitle">буткемп Go · доска сообщений</span></h1>
+    <div id="health" class="health unknown" title="GET /health">●&nbsp;проверяем</div>
+  </header>
+
+  <main>
+    <section class="panel" id="stages-panel">
+      <h2>Этапы</h2>
+      <p class="hint">Панель опрашивает ваш сервер сама. Считается всё равно
+        <code>go test ./tests/ -v</code>.</p>
+      <ul id="stages">
+        <li data-stage="1"><span class="dot"></span> 1 · Здоровье и фронтенд</li>
+        <li data-stage="2"><span class="dot"></span> 2 · Эхо, обычный текст</li>
+        <li data-stage="3"><span class="dot"></span> 3 · Эхо, JSON</li>
+        <li data-stage="4"><span class="dot"></span> 4 · Создание сообщений</li>
+        <li data-stage="5"><span class="dot"></span> 5 · Список</li>
+        <li data-stage="6"><span class="dot"></span> 6 · Удаление</li>
+      </ul>
+      <button id="recheck">Перепроверить этапы</button>
+    </section>
+
+    <section class="panel">
+      <h2>Эхо</h2>
+      <form id="echo-form">
+        <input id="echo-input" type="text" placeholder="текст запроса" autocomplete="off">
+        <label class="toggle"><input id="echo-json" type="checkbox"> как JSON</label>
+        <button type="submit">Отправить</button>
+      </form>
+      <pre id="echo-output" class="output">здесь будет ответ</pre>
+    </section>
+
+    <section class="panel grow">
+      <h2>Доска сообщений</h2>
+      <form id="message-form">
+        <input id="message-input" type="text" placeholder="текст сообщения" autocomplete="off">
+        <button type="submit">Опубликовать</button>
+      </form>
+      <p id="board-status" class="hint"></p>
+      <ul id="messages"></ul>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
