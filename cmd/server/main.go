@@ -6,6 +6,7 @@
 package main
 
 import (
+	"entrytest/cmd/server/api"
 	"log"
 	"net/http"
 	"os"
@@ -17,11 +18,13 @@ func main() {
 		port = "8080"
 	}
 
+	serverApi := api.CreateServerApi()
 	mux := http.NewServeMux()
 
 	// Панель из frontend/. Каталог берётся относительно рабочего, поэтому
 	// запускайте из корня модуля: go run ./cmd/server
 	mux.Handle("/", http.FileServer(http.Dir("frontend")))
+	mux.HandleFunc("GET /health", serverApi.Health.Get)
 
 	// TODO Этап 1: GET /health           -> 200, тело "ok"
 	// TODO Этап 2: POST /echo            -> тело запроса без изменений
