@@ -11,8 +11,9 @@ func (health *HealthService) Get(responseWriter http.ResponseWriter, request *ht
 	responseBody := []byte("ok")
 	written, error := responseWriter.Write(responseBody)
 	if error != nil {
-		log.Printf("error: failed to send response HealthService.Get: %v, written: %d", error, written)
+		log.Printf("[HealthService.Get] error: failed to send response: %v", error)
+		return
 	}
 
-	log.Printf("response HealthService.Get sent, written: %d", written)
+	log.Printf("[HealthService.Get] response sent, written: %d", written)
 }
