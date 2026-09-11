@@ -56,10 +56,13 @@ func EchoApplicationJson(responseWriter http.ResponseWriter, request *http.Reque
 		return
 	}
 
-	contentLenght := len(requestBody)
 	responseWriter.Header().Add(HeaderNameContentType, HeaderValueApplicationJson)
-	responseWriter.Header().Add(HeaderNameContentLength, strconv.Itoa(contentLenght))
-	responseWriter.Write(requestBody)
+	responseWriter.Header().Add(HeaderNameContentLength, strconv.Itoa(len(requestBody)))
+	written, error := responseWriter.Write(requestBody)
+	if error != nil {
+		log.Printf("[EchoService.Post] error: failed to send response: %v", error)
+		return
+	}
 
-	log.Printf("[EchoService.Post] response sent, written: %d", contentLenght)
+	log.Printf("[EchoService.Post] response sent, written: %d", written)
 }

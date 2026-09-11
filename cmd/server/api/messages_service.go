@@ -19,7 +19,7 @@ type MessageDataRequest struct {
 }
 
 type MessageDataResponse struct {
-	Id        uint32    `json:"id"`
+	Id        uint64    `json:"id"`
 	Message   string    `json:"message"`
 	CreatedAt time.Time `json:"created_at"`
 }
@@ -62,11 +62,39 @@ func (messages *MessagesService) Post(responseWriter http.ResponseWriter, reques
 		return
 	}
 
-	contentLenght := len(responseBody)
 	responseWriter.Header().Add(HeaderNameContentType, HeaderValueApplicationJson)
-	responseWriter.Header().Add(HeaderNameContentLength, strconv.Itoa(contentLenght))
+	responseWriter.Header().Add(HeaderNameContentLength, strconv.Itoa(len(responseBody)))
 	responseWriter.WriteHeader(http.StatusCreated)
-	responseWriter.Write(responseBody)
+	written, error := responseWriter.Write(responseBody)
+	if error != nil {
+		log.Printf("[MessagesService.Get] error: failed to send response: %v", error)
+		return
+	}
 
-	log.Printf("[MessagesService.Post] response sent, written: %d", contentLenght)
+	log.Printf("[MessagesService.Post] response sent, written: %d", written)
+}
+
+func (messages *MessagesService) Get(responseWriter http.ResponseWriter, request *http.Request) {
+	messageList := messages.messageStore.List()
+	messagePtrList := make([]*MessageDataResponse, len(messageList))
+	for index := range messageList {
+		messagePtrList[index] = (*MessageDataResponse)(&messageList[index])
+	}
+
+	responseBody, error := json.Marshal(messagePtrList)
+	if error != nil {
+		responseWriter.WriteHeader(http.StatusInternalServerError)
+		log.Printf("[MessagesService.Get] error: failed to serialize to json: %v", error)
+		return
+	}
+
+	responseWriter.Header().Add(HeaderNameContentType, HeaderValueApplicationJson)
+	responseWriter.Header().Add(HeaderNameContentLength, strconv.Itoa(len(responseBody)))
+	written, error := responseWriter.Write(responseBody)
+	if error != nil {
+		log.Printf("[MessagesService.Get] error: failed to send response: %v", error)
+		return
+	}
+
+	log.Printf("[MessagesService.Get] response sent, written: %d", written)
 }
