@@ -31,6 +31,7 @@ func main() {
 	mux.HandleFunc("POST /echo", serverApi.Echo.Post)
 	mux.HandleFunc("POST /messages", serverApi.Messages.Post)
 	mux.HandleFunc("GET /messages", serverApi.Messages.Get)
+	mux.HandleFunc("DELETE /messages/{id}", serverApi.Messages.Delete)
 
 	// TODO Этап 1: GET /health           -> 200, тело "ok"
 	// TODO Этап 2: POST /echo            -> тело запроса без изменений

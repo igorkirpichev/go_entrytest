@@ -98,3 +98,27 @@ func (messages *MessagesService) Get(responseWriter http.ResponseWriter, request
 
 	log.Printf("[MessagesService.Get] response sent, written: %d", written)
 }
+
+func (messages *MessagesService) Delete(responseWriter http.ResponseWriter, request *http.Request) {
+	idStr := request.PathValue("id")
+	if len(idStr) == 0 {
+		responseWriter.WriteHeader(http.StatusInternalServerError)
+		log.Printf("[MessagesService.Delete] error: missing id parameter")
+		return
+	}
+
+	id, error := strconv.ParseUint(idStr, 10, 64)
+	if error != nil {
+		responseWriter.WriteHeader(http.StatusBadRequest)
+		log.Printf("[MessagesService.Delete] error: invalid id format")
+		return
+	}
+
+	if messages.messageStore.Delete(id) {
+		responseWriter.WriteHeader(http.StatusNoContent)
+		log.Printf("[MessagesService.Delete] response sent: message deleted")
+	} else {
+		responseWriter.WriteHeader(http.StatusNotFound)
+		log.Printf("[MessagesService.Delete] response sent: message not found")
+	}
+}

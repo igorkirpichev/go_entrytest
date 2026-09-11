@@ -47,3 +47,17 @@ func (store *MessageStore) List() []Message {
 
 	return copied
 }
+
+func (store *MessageStore) Delete(index uint64) bool {
+	store.mutex.Lock()
+	defer store.mutex.Unlock()
+
+	for idx := range store.data {
+		if store.data[idx].Id == index {
+			store.data = slices.Delete(store.data, idx, idx+1)
+			return true
+		}
+	}
+
+	return false
+}
